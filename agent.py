@@ -58,7 +58,7 @@ class Auto:
 
     def store_experience(self, state, action, reward, next_state, done):
         self.replay_buffer.append((state, action, reward, next_state, done))
-
+    
     def train(self):
         if len(self.replay_buffer) < self.batch_size:
             return
@@ -67,11 +67,12 @@ class Auto:
         batch = random.sample(self.replay_buffer, self.batch_size)
         states, actions, rewards, next_states, dones = zip(*batch)
 
-        states = torch.tensor(states, dtype=torch.float32)
-        actions = torch.tensor(actions, dtype=torch.float32)  # Cambiar a float32
-        rewards = torch.tensor(rewards, dtype=torch.float32)
-        next_states = torch.tensor(next_states, dtype=torch.float32)
-        dones = torch.tensor(dones, dtype=torch.float32)
+        # Convertir listas de numpy.ndarray a numpy.array
+        states = torch.tensor(np.array(states), dtype=torch.float32)
+        actions = torch.tensor(np.array(actions), dtype=torch.float32)
+        rewards = torch.tensor(np.array(rewards), dtype=torch.float32)
+        next_states = torch.tensor(np.array(next_states), dtype=torch.float32)
+        dones = torch.tensor(np.array(dones), dtype=torch.float32)
 
         # Calcular Q(s, a) usando la red neuronal
         q_values = self.q_network(states)  # Predicción de la red
@@ -93,6 +94,7 @@ class Auto:
         # Actualizar el valor de epsilon
         if self.epsilon > self.min_epsilon:
             self.epsilon *= self.epsilon_decay
+
 
 
     def update_target_network(self):
